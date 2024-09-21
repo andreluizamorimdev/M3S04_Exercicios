@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:alpine as construtora
 
 WORKDIR /app
 
@@ -6,7 +6,10 @@ COPY . .
 
 RUN npm install
 
-EXPOSE 5173
+RUN npm run build
 
-CMD ["npm", "run", "dev"]
+FROM nginx:alpine AS final
 
+COPY --from=construtora /app/dist /usr/share/nginx/html
+
+EXPOSE 80
